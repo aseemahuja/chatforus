@@ -53,8 +53,8 @@ public class Chat4UsResource {
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			response.setErrorMessage(e.getMessage());
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); 
 		}
 		
 		
@@ -66,12 +66,20 @@ public class Chat4UsResource {
 		AskResponse response = new AskResponse();
 		List<Document> pages = null;
 		
+		if(request.getQuestion().isEmpty()) {
+			response.setError("Question is not asked.");
+			 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); 
+		}
+		
 		Cache cache = cacheManager.getCache("applicationCache");
 		
-		cache.get("websiteCache", List.class);
 		String content = "";
 		try {
 			pages =  cache.get("websiteCache", List.class);
+			if(null==pages || pages.isEmpty()) {
+				response.setError("No saved pages found.");
+				 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); 
+			}
 			for(Document doc : pages) {
 				content+=doc.text();
 				

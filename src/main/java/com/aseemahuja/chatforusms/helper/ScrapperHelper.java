@@ -36,6 +36,8 @@ public class ScrapperHelper {
 
         // Get all the links on the first page
         List<Element> links = document.select("a[href]");
+        
+        int linkCount = 0;
 
         // Iterate over the links and get the pages they point to
         for (Element link : links) {
@@ -47,7 +49,11 @@ public class ScrapperHelper {
             		&& !linkUrl.contains("linkedin.com")
             		&& !linkUrl.contains("instagram.com")
             		&& !linkUrl.startsWith("mailto:")) {
+            	if(linkCount>60) {
+            		break;
+            	}
                 pages.add(getPage(linkUrl));
+                linkCount++;
             }
         }
         
@@ -57,7 +63,7 @@ public class ScrapperHelper {
             String linkUrl = link.attr("href");
             if (linkUrl.contains("facebook.com")
             		) {
-            	socialMediaBody += " Facebook link is " + linkUrl;
+            	socialMediaBody += " Facebook profile is " + linkUrl;
             } else  if (linkUrl.contains("twitter.com")
             		) {
             	socialMediaBody += " Twitter link is " + linkUrl;
@@ -115,7 +121,15 @@ public class ScrapperHelper {
 		    result = doc.title();
 		  }
 		  
-		  return result;
+		  if(!result.isEmpty() && result.contains("|")) {
+			  result = result.split("\\|")[1];
+		  }
+		  
+		  if(!result.isEmpty() && result.contains("»")) {
+			  result = result.split("\\»")[0];
+		  }
+		  
+		  return result.trim();
     	
     }
     

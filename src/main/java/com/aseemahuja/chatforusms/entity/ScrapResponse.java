@@ -12,6 +12,7 @@ public class ScrapResponse {
 	String title;
 	String url;
 	String iconUrl;
+	String errorMessage;
 	
 	
 
